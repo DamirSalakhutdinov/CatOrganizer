@@ -69,12 +69,12 @@ public class CustomAdapter  extends BaseAdapter {
                 public void onImageDownloaded(Bitmap bitmap) {
                     ((ImageView) parent.getChildAt(position).findViewById(R.id.iImage))
                             .setImageBitmap(bitmap);
-                    Toast.makeText(ctx, "complete for " + p.name, Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(ctx, "complete for " + p.name, Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
                 public void onImageDownloadError() {
-                    Toast.makeText(ctx, "failed for " + p.name, Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(ctx, "failed for " + p.name, Toast.LENGTH_SHORT).show();
                 }
             }).executeOnExecutor(THREAD_POOL_EXECUTOR, p.imageUri);
 //                    .execute(p.imageUri);

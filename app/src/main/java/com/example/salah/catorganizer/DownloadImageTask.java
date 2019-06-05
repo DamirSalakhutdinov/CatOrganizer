@@ -8,9 +8,11 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 
 public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
 //    ViewGroup parent = null;
@@ -38,7 +40,8 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
 ////
 //            bmp = BitmapFactory.decodeStream(in, null, options);
 //            bmp = decodeSampledBitmapFromResource(in , 50, 50);
-            bmp = BitmapFactory.decodeStream(in);
+//            bmp = BitmapFactory.decodeStream(in);
+            bmp = decodeSampledBitmapFromResource(in, 50, 50, urldisplay);
         } catch (Exception e) {
             Log.e("Error", e.getMessage());
             e.printStackTrace();
@@ -46,14 +49,6 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         return bmp;
     }
     protected void onPostExecute(Bitmap downloadedBitmap) {
-//        if (result != null) {
-//            if (parent != null) {
-//                View ItemView = parent.getChildAt(position);
-//                ((ImageView) ItemView.findViewById(R.id.iImage)).setImageBitmap(result);
-//            } else {
-//                imageView.setImageBitmap(result);
-//            }
-//        }
         if (null != downloadedBitmap) {
             listener.onImageDownloaded(downloadedBitmap);
         } else {
@@ -62,24 +57,26 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
     }
 
     public Bitmap decodeSampledBitmapFromResource(InputStream in,
-                                                         int reqWidth, int reqHeight) {
+                                                         int reqWidth, int reqHeight, String urldisplay) throws MalformedURLException {
 
         // Читаем с inJustDecodeBounds=true для определения размеров
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeStream(in, null, options);
+        InputStream inReset = null;
         try {
-            in.reset();
-        } catch ( IOException e) {
-            return null;
+            inReset = new java.net.URL(urldisplay).openStream();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
         // Вычисляем inSampleSize
         options.inSampleSize = calculateInSampleSize(options, reqWidth,
                 reqHeight);
 
         // Читаем с использованием inSampleSize коэффициента
         options.inJustDecodeBounds = false;
-        return BitmapFactory.decodeStream(in, null, options);
+        return BitmapFactory.decodeStream(inReset, null, options);
     }
 
     public int calculateInSampleSize(BitmapFactory.Options options,
