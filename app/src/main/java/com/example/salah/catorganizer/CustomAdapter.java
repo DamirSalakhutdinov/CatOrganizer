@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
+import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,7 +77,7 @@ public class CustomAdapter  extends BaseAdapter {
                 public void onImageDownloadError() {
 //                    Toast.makeText(ctx, "failed for " + p.name, Toast.LENGTH_SHORT).show();
                 }
-            }).executeOnExecutor(THREAD_POOL_EXECUTOR, p.imageUri);
+            }).executeOnExecutor(THREAD_POOL_EXECUTOR, p.imageUri, String.valueOf(position));
 //                    .execute(p.imageUri);
             setCatLoaded(position);
         }

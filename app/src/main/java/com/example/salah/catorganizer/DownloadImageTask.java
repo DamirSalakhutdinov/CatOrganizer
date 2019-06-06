@@ -4,12 +4,16 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -31,20 +35,41 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
 
     protected Bitmap doInBackground(String... urls) {
         String urldisplay = urls[0];
+        String file_path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/kitties";
+        String imName = "kitty" + urls[1] + ".png";
         Bitmap bmp = null;
-        try {
-            InputStream in = new java.net.URL(urldisplay).openStream();
+        bmp = BitmapFactory.decodeFile(file_path + "/" + imName);
+        if (bmp == null) {
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                bmp = decodeSampledBitmapFromResource(in, 50, 50, urldisplay);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+            File dir = new File(file_path);
+            if (!dir.exists())
+                dir.mkdirs();
+            File file = new File(dir, "kitty" + urls[1] + ".png");
+            FileOutputStream fOut = null;
+            try {
+                fOut = new FileOutputStream(file);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
 
-//            BitmapFactory.Options options = new BitmapFactory.Options();
-//            options.inSampleSize = 32;
-////
-//            bmp = BitmapFactory.decodeStream(in, null, options);
-//            bmp = decodeSampledBitmapFromResource(in , 50, 50);
-//            bmp = BitmapFactory.decodeStream(in);
-            bmp = decodeSampledBitmapFromResource(in, 50, 50, urldisplay);
-        } catch (Exception e) {
-            Log.e("Error", e.getMessage());
-            e.printStackTrace();
+            assert bmp != null;
+            bmp.compress(Bitmap.CompressFormat.PNG, 100, fOut);
+            try {
+                fOut.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                fOut.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return bmp;
     }

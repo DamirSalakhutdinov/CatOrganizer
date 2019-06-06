@@ -13,7 +13,6 @@ import static android.os.AsyncTask.THREAD_POOL_EXECUTOR;
 public class ProfileActivity extends AppCompatActivity {
     ImageView Photo;
     TextView Name;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,6 +24,7 @@ public class ProfileActivity extends AppCompatActivity {
         Intent intent = getIntent();
         final String name = intent.getStringExtra("name");
         final String link = intent.getStringExtra("link");
+        final String position = intent.getStringExtra("pos");
         Name.setText(intent.getStringExtra("name"));
 //        new DownloadImageTask(Photo).execute(intent.getStringExtra("link"));
         new DownloadImageTask(new DownloadImageTask.Listener() {
@@ -32,13 +32,13 @@ public class ProfileActivity extends AppCompatActivity {
             public void onImageDownloaded(Bitmap bitmap) {
                 ((ImageView) Photo.findViewById(R.id.pImage))
                         .setImageBitmap(bitmap);
-                Toast.makeText(getApplicationContext(), "complete for" + name, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "complete for" + name, Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onImageDownloadError() {
                 Toast.makeText(getApplicationContext(), "failed for" + name, Toast.LENGTH_SHORT).show();
             }
-        }).executeOnExecutor(THREAD_POOL_EXECUTOR, link);
+        }).executeOnExecutor(THREAD_POOL_EXECUTOR, link, position);
     }
 }

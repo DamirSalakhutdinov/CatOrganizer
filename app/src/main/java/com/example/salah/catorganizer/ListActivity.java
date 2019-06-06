@@ -1,6 +1,7 @@
 package com.example.salah.catorganizer;
 
 import android.content.Intent;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.AdapterView;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class ListActivity extends AppCompatActivity {
+    String LIST_INSTANCE_STATE = "list state";
     String[] names = {
         "Барсик",
         "Кэсис",
@@ -38,6 +40,7 @@ public class ListActivity extends AppCompatActivity {
 
     ArrayList<CatInfo> catInfos = new ArrayList<CatInfo>();
     CustomAdapter customAdapter;
+    ListView lvMain;
 
     /** Called when the activity is first created. */
     public void onCreate(Bundle savedInstanceState) {
@@ -47,9 +50,8 @@ public class ListActivity extends AppCompatActivity {
         fillData();
         customAdapter = new CustomAdapter(this, catInfos);
         // находим список
-        ListView lvMain = (ListView) findViewById(R.id.lvMain);
+        lvMain = (ListView) findViewById(R.id.lvMain);
         lvMain.setAdapter(customAdapter);
-
         lvMain.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
@@ -57,6 +59,7 @@ public class ListActivity extends AppCompatActivity {
 
                 intent.putExtra("link", avaUris[position]);
                 intent.putExtra("name", names[position]);
+                intent.putExtra("pos", String.valueOf(position));
                 startActivity(intent);
             }
         });
@@ -67,5 +70,11 @@ public class ListActivity extends AppCompatActivity {
             catInfos.add(new CatInfo(names[i],
                     avaUris[i]));
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(LIST_INSTANCE_STATE, lvMain.onSaveInstanceState());
     }
 }
