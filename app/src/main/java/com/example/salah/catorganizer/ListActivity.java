@@ -48,7 +48,7 @@ public class ListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_list);
 
         fillData();
-        customAdapter = new CustomAdapter(this, catInfos);
+        customAdapter = new CustomAdapter(this, catInfos, getFilesDir().getAbsolutePath());
         // находим список
         lvMain = (ListView) findViewById(R.id.lvMain);
         lvMain.setAdapter(customAdapter);

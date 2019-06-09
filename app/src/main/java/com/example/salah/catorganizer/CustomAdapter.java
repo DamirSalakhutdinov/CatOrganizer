@@ -3,15 +3,12 @@ package com.example.salah.catorganizer;
 import java.util.ArrayList;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.util.Log;
-import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import static android.os.AsyncTask.THREAD_POOL_EXECUTOR;
 
@@ -20,8 +17,9 @@ public class CustomAdapter  extends BaseAdapter {
     LayoutInflater lInflater;
     ArrayList<CatInfo> objects;
     boolean[] loaded = new boolean[10];
+    String path;
 
-    CustomAdapter(Context context, ArrayList<CatInfo> catInfos) {
+    CustomAdapter(Context context, ArrayList<CatInfo> catInfos, String path) {
         ctx = context;
         objects = catInfos;
         lInflater = (LayoutInflater) ctx
@@ -29,6 +27,7 @@ public class CustomAdapter  extends BaseAdapter {
         for (int i = 0; i < 10; i++) {
             loaded[i] = false;
         }
+        this.path = path;
     }
 
     // кол-во элементов
@@ -68,8 +67,10 @@ public class CustomAdapter  extends BaseAdapter {
             new DownloadImageTask(new DownloadImageTask.Listener() {
                 @Override
                 public void onImageDownloaded(Bitmap bitmap) {
-                    ((ImageView) parent.getChildAt(position).findViewById(R.id.iImage))
-                            .setImageBitmap(bitmap);
+                    if (parent != null) {
+                        ((ImageView) parent.getChildAt(position).findViewById(R.id.iImage))
+                                .setImageBitmap(bitmap);
+                    }
 //                    Toast.makeText(ctx, "complete for " + p.name, Toast.LENGTH_SHORT).show();
                 }
 
@@ -77,7 +78,7 @@ public class CustomAdapter  extends BaseAdapter {
                 public void onImageDownloadError() {
 //                    Toast.makeText(ctx, "failed for " + p.name, Toast.LENGTH_SHORT).show();
                 }
-            }).executeOnExecutor(THREAD_POOL_EXECUTOR, p.imageUri, String.valueOf(position));
+            }).executeOnExecutor(THREAD_POOL_EXECUTOR, p.imageUri, String.valueOf(position), path);
 //                    .execute(p.imageUri);
             setCatLoaded(position);
         }

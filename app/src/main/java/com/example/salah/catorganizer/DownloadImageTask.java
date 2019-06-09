@@ -2,15 +2,9 @@ package com.example.salah.catorganizer;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.Toast;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -19,26 +13,26 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 
 public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-//    ViewGroup parent = null;
-//    int position;
-//    ImageView imageView;
     Listener listener;
     public DownloadImageTask(final Listener listener) {
-//        this.parent = parent;
-//        this.position = position;
         this.listener = listener;
     }
 
-//    public DownloadImageTask(ImageView imageView) {
-//        this.imageView = imageView;
-//    }
-
     protected Bitmap doInBackground(String... urls) {
         String urldisplay = urls[0];
-        String file_path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/kitties";
+
+//        String dir_path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/kitties";
+        String dir_path = urls[2];
         String imName = "kitty" + urls[1] + ".png";
         Bitmap bmp = null;
-        bmp = BitmapFactory.decodeFile(file_path + "/" + imName);
+
+
+        Log.d("My", dir_path);
+
+        File dir = new File(dir_path + "/" + imName);
+        if (dir.exists()) {
+            bmp = BitmapFactory.decodeFile(dir_path + "/" + imName);
+        }
         if (bmp == null) {
             try {
                 InputStream in = new java.net.URL(urldisplay).openStream();
@@ -47,28 +41,38 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
                 Log.e("Error", e.getMessage());
                 e.printStackTrace();
             }
-            File dir = new File(file_path);
+
+            dir = new File(dir_path);
             if (!dir.exists())
-                dir.mkdirs();
+                if (!dir.mkdirs()) {
+                    Log.d("My", "Problem creating Image folder");
+                }
             File file = new File(dir, "kitty" + urls[1] + ".png");
             FileOutputStream fOut = null;
             try {
                 fOut = new FileOutputStream(file);
             } catch (FileNotFoundException e) {
+                Log.d("My", "все плохо");
                 e.printStackTrace();
+
+            }
+            if (fOut == null) {
+                Log.d("My", "пиздец");
             }
 
-            assert bmp != null;
-            bmp.compress(Bitmap.CompressFormat.PNG, 100, fOut);
-            try {
-                fOut.flush();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            try {
-                fOut.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (bmp != null) {
+
+                bmp.compress(Bitmap.CompressFormat.PNG, 100, fOut);
+                try {
+                    fOut.flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    fOut.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
         return bmp;
