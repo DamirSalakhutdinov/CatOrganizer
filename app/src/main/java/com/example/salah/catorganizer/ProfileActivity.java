@@ -26,19 +26,17 @@ public class ProfileActivity extends AppCompatActivity {
         final String link = intent.getStringExtra("link");
         final String position = intent.getStringExtra("pos");
         Name.setText(intent.getStringExtra("name"));
-//        new DownloadImageTask(Photo).execute(intent.getStringExtra("link"));
         new DownloadImageTask(new DownloadImageTask.Listener() {
             @Override
             public void onImageDownloaded(Bitmap bitmap) {
                 ((ImageView) Photo.findViewById(R.id.pImage))
                         .setImageBitmap(bitmap);
-//                Toast.makeText(getApplicationContext(), "complete for" + name, Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onImageDownloadError() {
                 Toast.makeText(getApplicationContext(), "failed for" + name, Toast.LENGTH_SHORT).show();
             }
-        }).executeOnExecutor(THREAD_POOL_EXECUTOR, link, position);
+        }).executeOnExecutor(THREAD_POOL_EXECUTOR, link, position, getFilesDir().getAbsolutePath());
     }
 }

@@ -1,7 +1,6 @@
 package com.example.salah.catorganizer;
 
 import android.content.Intent;
-import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.AdapterView;
@@ -49,7 +48,6 @@ public class ListActivity extends AppCompatActivity {
 
         fillData();
         customAdapter = new CustomAdapter(this, catInfos, getFilesDir().getAbsolutePath());
-        // находим список
         lvMain = (ListView) findViewById(R.id.lvMain);
         lvMain.setAdapter(customAdapter);
         lvMain.setOnItemClickListener(new OnItemClickListener() {

@@ -13,11 +13,11 @@ import android.widget.TextView;
 import static android.os.AsyncTask.THREAD_POOL_EXECUTOR;
 
 public class CustomAdapter  extends BaseAdapter {
-    Context ctx;
-    LayoutInflater lInflater;
-    ArrayList<CatInfo> objects;
-    boolean[] loaded = new boolean[10];
-    String path;
+    private Context ctx;
+    private LayoutInflater lInflater;
+    private ArrayList<CatInfo> objects;
+    private boolean[] loaded = new boolean[10];
+    private String path;
 
     CustomAdapter(Context context, ArrayList<CatInfo> catInfos, String path) {
         ctx = context;
@@ -30,28 +30,23 @@ public class CustomAdapter  extends BaseAdapter {
         this.path = path;
     }
 
-    // кол-во элементов
     @Override
     public int getCount() {
         return objects.size();
     }
 
-    // элемент по позиции
     @Override
     public Object getItem(int position) {
         return objects.get(position);
     }
 
-    // id по позиции
     @Override
     public long getItemId(int position) {
         return position;
     }
 
-    // пункт списка
     @Override
     public View getView(final int position, View convertView, final ViewGroup parent) {
-        // используем созданные, но не используемые view
         View view = convertView;
         if (view == null) {
             view = lInflater.inflate(R.layout.item, parent, false);
@@ -62,7 +57,6 @@ public class CustomAdapter  extends BaseAdapter {
         ((TextView) view.findViewById(R.id.iName)).setText(p.name);
         ((ImageView) view.findViewById(R.id.iImage)).setImageResource(R.drawable.def_cat);
 
-//        new DownloadImageTask(parent, position).execute(p.imageUri);
         if (!isCatLoaded(position)) {
             new DownloadImageTask(new DownloadImageTask.Listener() {
                 @Override
@@ -71,22 +65,18 @@ public class CustomAdapter  extends BaseAdapter {
                         ((ImageView) parent.getChildAt(position).findViewById(R.id.iImage))
                                 .setImageBitmap(bitmap);
                     }
-//                    Toast.makeText(ctx, "complete for " + p.name, Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
                 public void onImageDownloadError() {
-//                    Toast.makeText(ctx, "failed for " + p.name, Toast.LENGTH_SHORT).show();
                 }
             }).executeOnExecutor(THREAD_POOL_EXECUTOR, p.imageUri, String.valueOf(position), path);
-//                    .execute(p.imageUri);
             setCatLoaded(position);
         }
 
         return view;
     }
 
-    // товар по позиции
     CatInfo getCatInfo(int position) {
         return ((CatInfo) getItem(position));
     }
